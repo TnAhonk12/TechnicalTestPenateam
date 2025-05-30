@@ -67,7 +67,7 @@ Jika kamu melihat error berikut saat scraping:
 Deepseek error: Request failed with status code 402
 ```
 
-Itu berarti **kuota pemakaian API Deepseek kamu telah habis** atau **belum aktifkan billing/akses premium**.
+Itu berarti **kuota pemakaian API Deepseek telah habis** atau **belum aktifkan billing/akses premium**.
 
 ## Catatan Teknis
 
