@@ -1,4 +1,4 @@
-# Technical Test Penateam
+# Technical Test Pena Team
 
 API ini digunakan untuk melakukan scraping produk dari halaman eBay dan mengekstrak informasi penting menggunakan AI (Deepseek).
 
