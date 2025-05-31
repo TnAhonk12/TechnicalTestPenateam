@@ -45,7 +45,7 @@ ${html.slice(0, 12000)}
       throw new Error('AI tidak mengembalikan format yang benar');
     }
   } catch (err) {
-    console.warn(err.message);
+    console.warn('Deepseek error: ', err.message);
 
     // Manual fallback: cari deskripsi langsung dari HTML
     const match = html.match(/<div[^>]*itemprop="description"[^>]*>(.*?)<\/div>/is);
