@@ -1,19 +1,25 @@
 const axios = require('axios');
 require('dotenv').config({ path: __dirname + '/.env' });
 
-
 async function extractWithAI(html) {
   const prompt = `
-Berikut ini adalah HTML dari halaman produk eBay. Tolong ekstrak informasi berikut:
-- Nama produk
-- Harga produk
-- Deskripsi produk
+Berikut adalah HTML dari halaman produk eBay.
+Tolong ekstrak informasi berikut:
+- Nama Produk
+- Harga Produk
+- Deskripsi Produk
 
-Jika tidak ditemukan, isikan dengan '-'.
+Balas dalam format:
+
+Nama Produk: ...
+Harga Produk: ...
+Deskripsi Produk: ...
+
+Jika tidak tersedia, isi dengan "-".
 
 HTML:
 ${html.slice(0, 12000)}
-`;
+  `;
 
   try {
     const response = await axios.post(
@@ -28,13 +34,29 @@ ${html.slice(0, 12000)}
           Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
           'Content-Type': 'application/json',
         },
+        timeout: 10000,
       }
     );
 
-    return response.data.choices[0].message.content.trim();
+    const result = response.data.choices[0].message.content.trim();
+    if (result.includes('Deskripsi Produk:')) {
+      return result;
+    } else {
+      throw new Error('AI tidak mengembalikan format yang benar');
+    }
   } catch (err) {
-    console.error('Deepseek error:', err.message);
-    return '-';
+    console.warn(err.message);
+
+    // Manual fallback: cari deskripsi langsung dari HTML
+    const match = html.match(/<div[^>]*itemprop="description"[^>]*>(.*?)<\/div>/is);
+    if (match) {
+      const rawText = match[1]
+        .replace(/<[^>]+>/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+      return `Deskripsi Produk: ${rawText}`;
+    }
+    return 'Deskripsi Produk: -';
   }
 }
 
